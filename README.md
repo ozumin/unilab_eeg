@@ -1,3 +1,5 @@
+Project: https://www.murata.eb.waseda.ac.jp/gitlab/masaki/mindwave
+
 ## ユニラブ用のプロジェクト
 
 * タスクはIssuesで管理します。
