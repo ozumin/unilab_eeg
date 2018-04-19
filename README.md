@@ -12,7 +12,8 @@ Issues情報集めたうち、なんども参考にする記事はここにま�
 * MindWaveからPythonを使って脳波の値を取得し、好きなプログラムで利用する方法
 http://mikenerian.hatenablog.com/entry/2017/12/18/222633
 
-
+* 公式ユーザーガイド
+http://developer.neurosky.com/docs/lib/exe/fetch.php?media=mwmplus_qsg_print_8122016d_jp.pdf
 
 ### アイデア
 * 脳波で集中力などを使う?
