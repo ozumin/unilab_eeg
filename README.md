@@ -5,6 +5,12 @@ Project: https://www.murata.eb.waseda.ac.jp/gitlab/masaki/mindwave
 * タスクはIssuesで管理します。
 * 締切は**7月末**
 
+#### 技術的なtips
+* pyserialを使え、ただしserialと競合する
+```
+pip uninstall serial
+pip install pyserial
+```
 
 ### 参考
 Issues情報集めたうち、なんども参考にする記事はここにまとめましょう
