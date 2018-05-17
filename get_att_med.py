@@ -19,4 +19,13 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 print 'meditation: %d' %int(meditation)
             if int(differencer) == 5:
                 eeg = t[1:]
-                print eeg
+                #print eeg
+                l = eeg.split(", ")
+                l = [x.split("=") for x in l]
+                l[len(l)-1][1] = l[len(l)-1][1].replace(')','')
+                #print([l[i][1] for i in range(len(l))])
+                masaki = [int(l[i][1]) for i in range(len(l))]
+                #print([float(masaki[i])/sum(masaki) for i in range(len(masaki))])
+                print([float(masaki[i])/(sum(masaki)-masaki[0]) for i in range(1,len(masaki))])
+
+                #print([int(x) for x in l])
