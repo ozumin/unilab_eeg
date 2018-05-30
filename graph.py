@@ -60,28 +60,6 @@ class realtime_plot(object):
 #        self.ax01.set_xlim((-2,12))
 #        self.ax01.set_ylim((-2,12))
 
-#        # ヒストグラムはset_dataがないので，更新毎に新たに作り直します
-#        self.ax10.cla()
-#        self.ax10.set_title('histogram')
-#        self.ax10.grid(True)
-#        self.lines100 = self.ax10.hist(data['corr'],label='corr')
-#        self.lines101 = self.ax10.hist(data['pred'],label='pred')
-#        self.ax10.set_xlim((-0.5,9.5))
-#        self.ax10.set_ylim((0,20))
-#        self.ax10.legend(loc='upper right')
-
-        # タイトルやテキストを更新する場合，更新前の値がfigureに残ったままになるので，更新毎に新たに作り直します
-#        bbox_props = dict(boxstyle='square,pad=0.3',fc='gray')
-#        self.ax11.cla()
-#        self.ax11.grid(True)
-#        self.ax11.set_xlabel('correct')
-#        self.ax11.set_ylabel('predict')
-#        self.ax11.set_title('optimized result')
-#        self.ax11.text(-1.5,10.5,data['text'], ha='left', va='center',size=11,bbox=bbox_props)
-#        self.lines = self.ax11.plot(data['opt_corr'],data['opt_pred'],'.')
-#        self.ax11.set_xlim((-2,12))
-#        self.ax11.set_ylim((-2,12))
-
     def pause(self,second):
         plt.pause(second)
 
@@ -92,7 +70,7 @@ x = np.arange(-np.pi,np.pi,0.1)
 y1 = np.sin(x)
 y2 = np.cos(x)
 opt_coef = 0
-attention =5 
+attention = 5 
 meditation = 0
 
 for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
@@ -119,37 +97,14 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 #print([l[i][1] for i in range(len(l))])
                 masaki = [int(l[i][1]) for i in range(len(l))]
                 #print([float(masaki[i])/sum(masaki) for i in range(len(masaki))])
-        x += 0.1
-        print(type(x))
-        y1 = int(attention)
-        y2 = int(meditation)
-        data['x'] = np.pi * x
-        data['y1'] = y1
-        data['y2'] = y2
-#        data['corr'] = 0 
-#        data['pred'] = 0
-        RP.set_data(data)
-        RP.pause(0.1)
-#    while True:
-#        x += 0.1
-#        y1 = int(attention)
-#        y2 = int(meditation)
-#        corr = np.random.randint(0,10,20)
-#        pred = np.random.randint(0,10,20)
-#        c = np.random.normal(0,1,1)
-#
-#        data['x'] = np.pi * x
-#        data['y1'] = y1
-#        data['y2'] = y2
-#        data['corr'] = corr 
-#        data['pred'] = pred
-#        coef = np.corrcoef(c*corr,pred)[0,1]
-#
-#        if abs(coef) > abs(opt_coef):
-#            data['opt_corr'] = corr
-#            data['opt_pred'] = pred
-#            data['text'] = 'c = ' + str(c[0])
-#            opt_coef = coef
-#
-#        RP.set_data(data)
-#        RP.pause(0.1)
+            x += 0.1
+            print(type(x))
+            y1 = int(attention)
+            y2 = int(meditation)
+            data['x'] = np.pi * x
+            data['y1'] = y1
+            data['y2'] = y2
+    #        data['corr'] = 0 
+    #        data['pred'] = 0
+            RP.set_data(data)
+            RP.pause(0.1)
