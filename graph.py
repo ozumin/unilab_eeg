@@ -83,9 +83,9 @@ class realtime_plot(object):
         self.lines01.set_data(data['x'], data['highalpha_'])
         self.lines11.set_data(data['x'], data['lowgamma_'])
         self.ax01.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax01.set_ylim((-0.01, 1677721 / 4))
+        self.ax01.set_ylim((-0.01, 1677721 / 8))
         self.ax11.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax11.set_ylim((-0.01, 1677721 / 4))
+        self.ax11.set_ylim((-0.01, 1677721 / 8))
         # 凡例を固定するために必要
         self.ax00.legend(loc='upper right')
         self.ax10.legend(loc='upper left')
@@ -157,7 +157,11 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 masaki = [int(l[i][1]) for i in range(len(l))]
                 highalpha = masaki[3]
                 lowgamma = masaki[6]
-                masaki[2:] = [float(masaki[i]) / sum(masaki[2:])
+                sumasaki = sum(masaki[2:])
+                if sumasaki == 0:
+                    print("caution! sum(masaki) is 0")
+                    sumasaki = 1 
+                masaki[2:] = [float(masaki[i]) / sumasaki
                               for i in range(2, len(masaki))]
 
             tm.sleep(0.2)
