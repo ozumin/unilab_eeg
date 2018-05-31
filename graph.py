@@ -22,9 +22,9 @@ def calc_nouha(intensities):
     gamma: 値}の辞書型
     '''
     return {
-        alpha: sum(intensities[3:5]),
-        beta: sum(intensities[5:7]),
-        gamma: sum(intensities[7:9])
+        'alpha': sum(intensities[3:5]),
+        'beta': sum(intensities[5:7]),
+        'gamma': sum(intensities[7:9])
     }
 
 
@@ -147,6 +147,11 @@ highalpha = 0
 lowgamma = 0
 masaki_ = [np.zeros(100)] * 8
 masaki = [0] * 8
+dat = {
+    'alpha':0,
+    'beta':0,
+    'gamma':0
+}
 
 for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
     for pkt in packets:
@@ -171,6 +176,7 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 l[len(l) - 1][1] = l[len(l) - 1][1].replace(')', '')
                 #print([l[i][1] for i in range(len(l))])
                 masaki = [int(l[i][1]) for i in range(len(l))]
+                dat = calc_nouha(masaki)
                 highalpha = masaki[3]
                 lowgamma = masaki[6]
                 sumasaki = sum(masaki[2:])
@@ -205,7 +211,7 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
             data['midgamma'] = np.append(
                 data['midgamma'][1:], np.array([masaki[7]]))
             data['highalpha_'] = np.append(
-                data['highalpha_'][1:], np.array([int(highalpha)]))
+                data['highalpha_'][1:], np.array([dat['alpha']]))
             data['lowgamma_'] = np.append(
                 data['lowgamma_'][1:], np.array([int(lowgamma)]))
             RP.set_data(data)
