@@ -83,9 +83,9 @@ class realtime_plot(object):
         self.lines01.set_data(data['x'], data['highalpha_'])
         self.lines11.set_data(data['x'], data['lowgamma_'])
         self.ax01.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax01.set_ylim((-0.01, 167772))
+        self.ax01.set_ylim((-0.01, 1677721 / 4))
         self.ax11.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax11.set_ylim((-0.01, 167772))
+        self.ax11.set_ylim((-0.01, 1677721 / 4))
         # 凡例を固定するために必要
         self.ax00.legend(loc='upper right')
         self.ax10.legend(loc='upper left')
