@@ -12,6 +12,22 @@ font = {'family': 'monospace', 'size': '9'}
 mpl.rc('font', **font)
 
 
+def calc_nouha(intensities):
+    '''
+    各周波数の強度成分intensities(具体的にはmasaki)を受け取り、主要な強度に足し合わせる関数
+    intensitiesの中身は[delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgammma]である。
+    返り値は、
+    {alpha: 値,
+    beta: 値,
+    gamma: 値}の辞書型
+    '''
+    return {
+        alpha: sum(intensities[3:5]),
+        beta: sum(intensities[5:7]),
+        gamma: sum(intensities[7:9])
+    }
+
+
 class realtime_plot(object):
 
     def __init__(self):
@@ -160,7 +176,7 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 sumasaki = sum(masaki[2:])
                 if sumasaki == 0:
                     print("caution! sum(masaki) is 0")
-                    sumasaki = 1 
+                    sumasaki = 1
                 masaki[2:] = [float(masaki[i]) / sumasaki
                               for i in range(2, len(masaki))]
 
