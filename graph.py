@@ -107,7 +107,7 @@ class realtime_plot(object):
 #        self.lines107.set_data(data['x'], data['midgamma'])
         self.lines10.set_data(data['x'], data['alpha_'])
         self.ax10.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax10.set_ylim((-0.01, 1677721))
+        self.ax10.set_ylim((-0.01, 1677721/2))
 #        self.lines01.set_data(data['x'], data['highalpha_'])
 #        self.lines11.set_data(data['x'], data['lowgamma_'])
         self.lines01.set_data(data['x'], data['beta_'])
@@ -115,9 +115,9 @@ class realtime_plot(object):
         self.lines02.set_data(data['x'], data['delta'])
         self.lines12.set_data(data['x'], data['theta'])
         self.ax01.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax01.set_ylim((-0.01, 1677721))
+        self.ax01.set_ylim((-0.01, 1677721/2))
         self.ax11.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax11.set_ylim((-0.01, 1677721))
+        self.ax11.set_ylim((-0.01, 1677721/2))
         self.ax02.set_xlim((data['x'].min(), data['x'].max()))
         self.ax02.set_ylim((-0.01, 1677721))
         self.ax12.set_xlim((data['x'].min(), data['x'].max()))
@@ -209,7 +209,7 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 masaki[2:] = [float(masaki[i]) / sumasaki
                               for i in range(2, len(masaki))]
 
-            tm.sleep(0.2)
+#            tm.sleep(0.2)
             time += 1
             x = np.arange(-5 + 0.1 * time, 5 + 0.1 * time, 0.1)
 #            y1_new = np.append(y1[1:], np.array([int(attention)]))
