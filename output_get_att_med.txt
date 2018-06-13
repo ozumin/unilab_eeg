@@ -1,0 +1,9 @@
+EEGPowerData(delta=106434, theta=59879, lowalpha=2884, highalpha=5662, lowbeta=5808, highbeta=2272, lowgamma=1975, midgamma=5953)
+attention: 30
+meditation: 30
+EEGPowerData(delta=27547, theta=12377, lowalpha=4900, highalpha=2275, lowbeta=5888, highbeta=7213, lowgamma=6458, midgamma=11157)
+attention: 54
+meditation: 30
+EEGPowerData(delta=320156, theta=43774, lowalpha=11037, highalpha=1452, lowbeta=1754, highbeta=1644, lowgamma=1357, midgamma=3276)
+attention: 44
+meditation: 30
