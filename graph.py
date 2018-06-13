@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time as tm
 import numpy as np
 import thinkgear
 import matplotlib as mpl
@@ -72,18 +71,18 @@ class realtime_plot(object):
         # プロットの初期化
         self.lines000, = self.ax00.plot([-1, -1], [1, 1], label='attention')
         self.lines001, = self.ax00.plot([-1, -1], [1, 1], label='meditation')
-#        self.lines100, = self.ax10.plot([-1, -1], [1, 1], label='delta')
-#        self.lines101, = self.ax10.plot([-1, -1], [1, 1], label='theta')
-#        self.lines102, = self.ax10.plot([-1, -1], [1, 1], label='lowalpha')
-#        self.lines103, = self.ax10.plot([-1, -1], [1, 1], label='highalpha')
-#        self.lines104, = self.ax10.plot([-1, -1], [1, 1], label='lowbeta')
-#        self.lines105, = self.ax10.plot([-1, -1], [1, 1], label='highbeta')
-#        self.lines106, = self.ax10.plot([-1, -1], [1, 1], label='lowgamma')
-#        self.lines107, = self.ax10.plot([-1, -1], [1, 1], label='midgamma')
-#        self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='highalpha')
-#        self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='lowgamma')
-#        self.lines01, = self.ax01.plot([-1,-1],[1,1],'.')
-#        self.lines11, = self.ax11.plot([-1,-1],[1,1],'.r')
+        #self.lines100, = self.ax10.plot([-1, -1], [1, 1], label='delta')
+        #self.lines101, = self.ax10.plot([-1, -1], [1, 1], label='theta')
+        #self.lines102, = self.ax10.plot([-1, -1], [1, 1], label='lowalpha')
+        #self.lines103, = self.ax10.plot([-1, -1], [1, 1], label='highalpha')
+        #self.lines104, = self.ax10.plot([-1, -1], [1, 1], label='lowbeta')
+        #self.lines105, = self.ax10.plot([-1, -1], [1, 1], label='highbeta')
+        #self.lines106, = self.ax10.plot([-1, -1], [1, 1], label='lowgamma')
+        #self.lines107, = self.ax10.plot([-1, -1], [1, 1], label='midgamma')
+        #self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='highalpha')
+        #self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='lowgamma')
+        #self.lines01, = self.ax01.plot([-1,-1],[1,1],'.')
+        #self.lines11, = self.ax11.plot([-1,-1],[1,1],'.r')
         self.lines10, = self.ax10.plot([-1, -1], [1, 1], label='alpha')
         self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='beta')
         self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='gamma')
@@ -97,19 +96,19 @@ class realtime_plot(object):
         self.lines001.set_data(data['x'], data['y2'])
         self.ax00.set_xlim((data['x'].min(), data['x'].max()))
         self.ax00.set_ylim((-1, 101))
-#        self.lines100.set_data(data['x'], data['delta'])
-#        self.lines101.set_data(data['x'], data['theta'])
-#        self.lines102.set_data(data['x'], data['lowalpha'])
-#        self.lines103.set_data(data['x'], data['highalpha'])
-#        self.lines104.set_data(data['x'], data['lowbeta'])
-#        self.lines105.set_data(data['x'], data['highbeta'])
-#        self.lines106.set_data(data['x'], data['lowgamma'])
-#        self.lines107.set_data(data['x'], data['midgamma'])
+        #self.lines100.set_data(data['x'], data['delta'])
+        #self.lines101.set_data(data['x'], data['theta'])
+        #self.lines102.set_data(data['x'], data['lowalpha'])
+        #self.lines103.set_data(data['x'], data['highalpha'])
+        #self.lines104.set_data(data['x'], data['lowbeta'])
+        #self.lines105.set_data(data['x'], data['highbeta'])
+        #self.lines106.set_data(data['x'], data['lowgamma'])
+        #self.lines107.set_data(data['x'], data['midgamma'])
         self.lines10.set_data(data['x'], data['alpha_'])
         self.ax10.set_xlim((data['x'].min(), data['x'].max()))
         self.ax10.set_ylim((-0.01, 1677721))
-#        self.lines01.set_data(data['x'], data['highalpha_'])
-#        self.lines11.set_data(data['x'], data['lowgamma_'])
+        #self.lines01.set_data(data['x'], data['highalpha_'])
+        #self.lines11.set_data(data['x'], data['lowgamma_'])
         self.lines01.set_data(data['x'], data['beta_'])
         self.lines11.set_data(data['x'], data['gamma_'])
         self.lines02.set_data(data['x'], data['delta'])
@@ -126,9 +125,9 @@ class realtime_plot(object):
         self.ax00.legend(loc='upper right')
         self.ax10.legend(loc='upper left')
 
-#        self.lines01.set_data(data['corr'],data['pred'])
-#        self.ax01.set_xlim((-2,12))
-#        self.ax01.set_ylim((-2,12))
+        # self.lines01.set_data(data['corr'],data['pred'])
+        # self.ax01.set_xlim((-2,12))
+        # self.ax01.set_ylim((-2,12))
 
     def pause(self, second):
         plt.pause(second)
@@ -171,9 +170,9 @@ lowgamma = 0
 masaki_ = [np.zeros(100)] * 8
 masaki = [0] * 8
 dat = {
-    'alpha':0,
-    'beta':0,
-    'gamma':0
+    'alpha': 0,
+    'beta': 0,
+    'gamma': 0
 }
 
 for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
@@ -209,7 +208,6 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 masaki[2:] = [float(masaki[i]) / sumasaki
                               for i in range(2, len(masaki))]
 
-            tm.sleep(0.2)
             time += 1
             x = np.arange(-5 + 0.1 * time, 5 + 0.1 * time, 0.1)
 #            y1_new = np.append(y1[1:], np.array([int(attention)]))
@@ -242,4 +240,4 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
             data['lowgamma_'] = np.append(
                 data['lowgamma_'][1:], np.array([int(lowgamma)]))
             RP.set_data(data)
-            RP.pause(0.1)
+            RP.pause(0.2)
