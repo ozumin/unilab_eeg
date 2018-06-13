@@ -3,6 +3,7 @@ import numpy as np
 import thinkgear
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from calibrate import get_nouha
 
 PORT = '/dev/tty.MindWaveMobile-SerialPo'
 
