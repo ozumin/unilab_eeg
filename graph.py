@@ -11,23 +11,6 @@ PORT = '/dev/tty.MindWaveMobile-SerialPo'
 font = {'family': 'monospace', 'size': '9'}
 mpl.rc('font', **font)
 
-
-def calc_nouha(intensities):
-    '''
-    各周波数の強度成分intensities(具体的にはmasaki)を受け取り、主要な強度に足し合わせる関数
-    intensitiesの中身は[delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgammma]である。
-    返り値は、
-    {alpha: 値,
-    beta: 値,
-    gamma: 値}の辞書型
-    '''
-    return {
-        'alpha': sum(intensities[3:5]),
-        'beta': sum(intensities[5:7]),
-        'gamma': sum(intensities[7:9])
-    }
-
-
 class realtime_plot(object):
 
     def __init__(self):
@@ -72,18 +55,6 @@ class realtime_plot(object):
         # プロットの初期化
         self.lines000, = self.ax00.plot([-1, -1], [1, 1], label='attention')
         self.lines001, = self.ax00.plot([-1, -1], [1, 1], label='meditation')
-#        self.lines100, = self.ax10.plot([-1, -1], [1, 1], label='delta')
-#        self.lines101, = self.ax10.plot([-1, -1], [1, 1], label='theta')
-#        self.lines102, = self.ax10.plot([-1, -1], [1, 1], label='lowalpha')
-#        self.lines103, = self.ax10.plot([-1, -1], [1, 1], label='highalpha')
-#        self.lines104, = self.ax10.plot([-1, -1], [1, 1], label='lowbeta')
-#        self.lines105, = self.ax10.plot([-1, -1], [1, 1], label='highbeta')
-#        self.lines106, = self.ax10.plot([-1, -1], [1, 1], label='lowgamma')
-#        self.lines107, = self.ax10.plot([-1, -1], [1, 1], label='midgamma')
-#        self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='highalpha')
-#        self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='lowgamma')
-#        self.lines01, = self.ax01.plot([-1,-1],[1,1],'.')
-#        self.lines11, = self.ax11.plot([-1,-1],[1,1],'.r')
         self.lines10, = self.ax10.plot([-1, -1], [1, 1], label='alpha')
         self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='beta')
         self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='gamma')
@@ -97,19 +68,9 @@ class realtime_plot(object):
         self.lines001.set_data(data['x'], data['y2'])
         self.ax00.set_xlim((data['x'].min(), data['x'].max()))
         self.ax00.set_ylim((-1, 101))
-#        self.lines100.set_data(data['x'], data['delta'])
-#        self.lines101.set_data(data['x'], data['theta'])
-#        self.lines102.set_data(data['x'], data['lowalpha'])
-#        self.lines103.set_data(data['x'], data['highalpha'])
-#        self.lines104.set_data(data['x'], data['lowbeta'])
-#        self.lines105.set_data(data['x'], data['highbeta'])
-#        self.lines106.set_data(data['x'], data['lowgamma'])
-#        self.lines107.set_data(data['x'], data['midgamma'])
         self.lines10.set_data(data['x'], data['alpha_'])
         self.ax10.set_xlim((data['x'].min(), data['x'].max()))
         self.ax10.set_ylim((-0.01, 1677721/2))
-#        self.lines01.set_data(data['x'], data['highalpha_'])
-#        self.lines11.set_data(data['x'], data['lowgamma_'])
         self.lines01.set_data(data['x'], data['beta_'])
         self.lines11.set_data(data['x'], data['gamma_'])
         self.lines02.set_data(data['x'], data['delta'])
@@ -126,10 +87,6 @@ class realtime_plot(object):
         self.ax00.legend(loc='upper right')
         self.ax10.legend(loc='upper left')
 
-#        self.lines01.set_data(data['corr'],data['pred'])
-#        self.ax01.set_xlim((-2,12))
-#        self.ax01.set_ylim((-2,12))
-
     def pause(self, second):
         plt.pause(second)
 
@@ -137,7 +94,6 @@ class realtime_plot(object):
 # 使用例
 RP = realtime_plot()
 data = {}
-#x = np.arange(-np.pi,np.pi,0.1)
 time = 0
 x = np.arange(-5, 5, 0.1)
 data['y1'] = np.zeros(100)
@@ -155,14 +111,6 @@ data['lowgamma_'] = np.zeros(100)
 data['alpha_'] = np.zeros(100)
 data['beta_'] = np.zeros(100)
 data['gamma_'] = np.zeros(100)
-#m0 = np.zeros(100)
-#m1 = np.zeros(100)
-#m2 = np.zeros(100)
-#m3 = np.zeros(100)
-#m4 = np.zeros(100)
-#m = np.zeros(100)
-#m = np.zeros(100)
-#m = np.zeros(100)
 opt_coef = 0
 attention = 0
 meditation = 0
@@ -209,13 +157,8 @@ for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
                 masaki[2:] = [float(masaki[i]) / sumasaki
                               for i in range(2, len(masaki))]
 
-#            tm.sleep(0.2)
             time += 1
             x = np.arange(-5 + 0.1 * time, 5 + 0.1 * time, 0.1)
-#            y1_new = np.append(y1[1:], np.array([int(attention)]))
-#            y1 = y1_new
-#            y2_new = np.append(y2[1:], np.array([int(meditation)]))
-#            y2 = y2_new
             data['x'] = x
             data['y1'] = np.append(data['y1'][1:], np.array([int(attention)]))
             data['y2'] = np.append(data['y2'][1:], np.array([int(meditation)]))
