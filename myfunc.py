@@ -91,7 +91,7 @@ def calibrate(PORT=PORT):
                         count = count + 1
 
 
-def transform(masaki, mu, sigma):
+def transform(masaki, mu, s):
     '''
     masaki([delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gamma]の振幅強度)が与えられたら、それを平均0分散1になるようにmuとsigmaで調節する関数
     引数
