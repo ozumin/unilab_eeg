@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import time as tm
 import numpy as np
 import thinkgear
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from calibrate import get_nouha
+import sys
+import myfunc
 
 PORT = '/dev/tty.MindWaveMobile-SerialPo'
 
@@ -12,215 +14,120 @@ font = {'family': 'monospace', 'size': '9'}
 mpl.rc('font', **font)
 
 class realtime_plot(object):
-
+    """
+    リアルタイムでグラフ描画するクラス
+    メソッドにはinitialize, set_data, pauseが入ってる
+    呼び出されたら__init__でデータ数をself.numberに入れ，initializeを呼び出す
+    """
     def __init__(self):
+        # 最初にmasakiを渡してデータがいくつあるかをself.numberに入れる initializeを呼び出す
+        self.number = 11
         self.fig = plt.figure(figsize=(12, 8))
         self.initialize()
+        
+    def position(self):
+        ## 各プロットの位置を決める
+        # plt.subplot2gridで3x4で分割するとしている
+        self.pos = {}
+        for i in range(self.number):
+            self.pos[i,0] = i / 4 
+            self.pos[i,1] = (i - self.pos[i,0]) % 4
 
     def initialize(self):
+        ## 最初のプロットの設定
         self.fig.suptitle('monitoring sample', size=12)
-        self.fig.subplots_adjust(
-            left=0.05, bottom=0.1, right=0.95, top=0.90, wspace=0.2, hspace=0.6)
-        self.ax00 = plt.subplot2grid((2, 3), (0, 0))
-        self.ax10 = plt.subplot2grid((2, 3), (1, 0))
-        self.ax01 = plt.subplot2grid((2, 3), (0, 1))
-        self.ax11 = plt.subplot2grid((2, 3), (1, 1))
-        self.ax02 = plt.subplot2grid((2, 3), (0, 2))
-        self.ax12 = plt.subplot2grid((2, 3), (1, 2))
-        self.ax00.grid(True)
-        self.ax10.grid(True)
-        self.ax01.grid(True)
-        self.ax11.grid(True)
-        self.ax02.grid(True)
-        self.ax12.grid(True)
-        self.ax00.set_title('attention and meditation')
-        self.ax10.set_title('alpha')
-        self.ax01.set_title('beta')
-        self.ax11.set_title('gamma')
-        self.ax02.set_title('delta')
-        self.ax12.set_title('theta')
-        self.ax00.set_xlabel('x')
-        self.ax00.set_ylabel('y')
-        self.ax10.set_xlabel('x')
-        self.ax10.set_ylabel('y')
-        self.ax01.set_xlabel('x')
-        self.ax01.set_ylabel('y')
-        self.ax11.set_xlabel('x')
-        self.ax11.set_ylabel('y')
-        self.ax02.set_xlabel('x')
-        self.ax02.set_xlabel('x')
-        self.ax12.set_ylabel('y')
-        self.ax12.set_ylabel('y')
+        self.fig.subplots_adjust( left=0.05, bottom=0.1, right=0.95, top=0.90, wspace=0.2, hspace=0.6)
+        self.position()
+        # self.plotに軸やタイトルなどの設定をする
+        # self.linesにプロットする線の情報を入れる
+        self.plot = {}
+        self.lines = {}
+        for i in range(self.number):
+            self.plot[i] = plt.subplot2grid((3,4), (self.pos[i,0], self.pos[i,1]))
+            self.plot[i].grid(True)
+            self.plot[i].set_title(str(i)) # ここにmasakiでの名前入れたい
+            self.plot[i].set_xlabel('x')
+            self.plot[i].set_ylabel('y')
+            # プロットの初期化
+            self.lines[i], = self.plot[i].plot([-1, -1], [1, 1], label=str(i))
 
-        # プロットの初期化
-        self.lines000, = self.ax00.plot([-1, -1], [1, 1], label='attention')
-        self.lines001, = self.ax00.plot([-1, -1], [1, 1], label='meditation')
-<<<<<<< HEAD
-=======
-        #self.lines100, = self.ax10.plot([-1, -1], [1, 1], label='delta')
-        #self.lines101, = self.ax10.plot([-1, -1], [1, 1], label='theta')
-        #self.lines102, = self.ax10.plot([-1, -1], [1, 1], label='lowalpha')
-        #self.lines103, = self.ax10.plot([-1, -1], [1, 1], label='highalpha')
-        #self.lines104, = self.ax10.plot([-1, -1], [1, 1], label='lowbeta')
-        #self.lines105, = self.ax10.plot([-1, -1], [1, 1], label='highbeta')
-        #self.lines106, = self.ax10.plot([-1, -1], [1, 1], label='lowgamma')
-        #self.lines107, = self.ax10.plot([-1, -1], [1, 1], label='midgamma')
-        #self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='highalpha')
-        #self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='lowgamma')
-        #self.lines01, = self.ax01.plot([-1,-1],[1,1],'.')
-        #self.lines11, = self.ax11.plot([-1,-1],[1,1],'.r')
->>>>>>> Aota
-        self.lines10, = self.ax10.plot([-1, -1], [1, 1], label='alpha')
-        self.lines01, = self.ax01.plot([-1, -1], [1, 1], label='beta')
-        self.lines11, = self.ax11.plot([-1, -1], [1, 1], label='gamma')
-        self.lines02, = self.ax02.plot([-1, -1], [1, 1], label='delta')
-        self.lines12, = self.ax12.plot([-1, -1], [1, 1], label='theta')
-
-    # 値名と値を代入した辞書タイプのdataから，必要なデータをsubplotの値に代入します
     def set_data(self, data):
+    # 値名と値を代入した辞書タイプのdataから，必要なデータをsubplotの値に代入します
+        for i in range(self.number):
+            self.lines[i].set_data(data[0], data[i+1])
+            self.plot[i].set_xlim((data[0].min(), data[0].max()))
+            self.plot[i].set_ylim((-10,10))
+        import pdb; pdb.set_trace()
 
-        self.lines000.set_data(data['x'], data['y1'])
-        self.lines001.set_data(data['x'], data['y2'])
-        self.ax00.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax00.set_ylim((-1, 101))
-<<<<<<< HEAD
-        self.lines10.set_data(data['x'], data['alpha_'])
-        self.ax10.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax10.set_ylim((-0.01, 1677721/2))
-=======
-        #self.lines100.set_data(data['x'], data['delta'])
-        #self.lines101.set_data(data['x'], data['theta'])
-        #self.lines102.set_data(data['x'], data['lowalpha'])
-        #self.lines103.set_data(data['x'], data['highalpha'])
-        #self.lines104.set_data(data['x'], data['lowbeta'])
-        #self.lines105.set_data(data['x'], data['highbeta'])
-        #self.lines106.set_data(data['x'], data['lowgamma'])
-        #self.lines107.set_data(data['x'], data['midgamma'])
-        self.lines10.set_data(data['x'], data['alpha_'])
-        self.ax10.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax10.set_ylim((-0.01, 1677721))
-        #self.lines01.set_data(data['x'], data['highalpha_'])
-        #self.lines11.set_data(data['x'], data['lowgamma_'])
->>>>>>> Aota
-        self.lines01.set_data(data['x'], data['beta_'])
-        self.lines11.set_data(data['x'], data['gamma_'])
-        self.lines02.set_data(data['x'], data['delta'])
-        self.lines12.set_data(data['x'], data['theta'])
-        self.ax01.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax01.set_ylim((-0.01, 1677721/2))
-        self.ax11.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax11.set_ylim((-0.01, 1677721/2))
-        self.ax02.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax02.set_ylim((-0.01, 1677721))
-        self.ax12.set_xlim((data['x'].min(), data['x'].max()))
-        self.ax12.set_ylim((-0.01, 1677721))
-        # 凡例を固定するために必要
-        self.ax00.legend(loc='upper right')
-        self.ax10.legend(loc='upper left')
-
-<<<<<<< HEAD
-=======
-        # self.lines01.set_data(data['corr'],data['pred'])
-        # self.ax01.set_xlim((-2,12))
-        # self.ax01.set_ylim((-2,12))
-
->>>>>>> Aota
     def pause(self, second):
         plt.pause(second)
 
 
-# 使用例
-RP = realtime_plot()
-data = {}
-time = 0
+# xの初期化
 x = np.arange(-5, 5, 0.1)
-data['y1'] = np.zeros(100)
-data['y2'] = np.zeros(100)
-data['delta'] = np.zeros(100)
-data['theta'] = np.zeros(100)
-data['lowalpha'] = np.zeros(100)
-data['highalpha'] = np.zeros(100)
-data['lowbeta'] = np.zeros(100)
-data['highbeta'] = np.zeros(100)
-data['lowgamma'] = np.zeros(100)
-data['midgamma'] = np.zeros(100)
-data['highalpha_'] = np.zeros(100)
-data['lowgamma_'] = np.zeros(100)
-data['alpha_'] = np.zeros(100)
-data['beta_'] = np.zeros(100)
-data['gamma_'] = np.zeros(100)
-opt_coef = 0
-attention = 0
-meditation = 0
-highalpha = 0
-lowgamma = 0
-masaki_ = [np.zeros(100)] * 8
-masaki = [0] * 8
-dat = {
-    'alpha': 0,
-    'beta': 0,
-    'gamma': 0
-}
+mu = []
+sigma = []
 
-for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
-    for pkt in packets:
-        if isinstance(pkt, thinkgear.ThinkGearRawWaveData):
-            continue
+#plot用のデータを格納するdata
+data = {}
+data[0] = x
+for i in range(11):
+    data[i+1] = np.zeros(100)
 
-        t = str(pkt)
+RP = realtime_plot()
 
-        if t != '':
-            differencer = t[0:1]
-            if int(differencer) == 1:
-                attention = t[1:]
-                print 'attention: %d' % int(attention)
-            if int(differencer) == 2:
-                meditation = t[1:]
-                print 'meditation: %d' % int(meditation)
-            if int(differencer) == 5:
-                eeg = t[1:]
-                # print eeg
-                l = eeg.split(", ")
-                l = [x.split("=") for x in l]
-                l[len(l) - 1][1] = l[len(l) - 1][1].replace(')', '')
-                #print([l[i][1] for i in range(len(l))])
-                masaki = [int(l[i][1]) for i in range(len(l))]
-                dat = calc_nouha(masaki)
-                highalpha = masaki[3]
-                lowgamma = masaki[6]
-                sumasaki = sum(masaki[2:])
-                if sumasaki == 0:
-                    print("caution! sum(masaki) is 0")
-                    sumasaki = 1
-                masaki[2:] = [float(masaki[i]) / sumasaki
-                              for i in range(2, len(masaki))]
+while(True):
+    try:
+        #ここでmasaki更新する
+#        for i in range(n):
+#            masaki[i] = time + i
+        count = 0
+        attention, meditation = 0, 0
+        df = []
+        for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
+            for pkt in packets:
+                if isinstance(pkt, thinkgear.ThinkGearRawWaveData):
+                    continue
+                t = str(pkt)
+                # センサーで取得した値の格納
+                if t != '':
+                    differencer = t[0:1]
+                    if int(differencer) == 1:
+                        attention = int(t[1:])
+#                        print 'attention: %d' % attention
+                    if int(differencer) == 2:
+                        meditation = int(t[1:])
+#                        print 'meditation: %d' % meditation
+                    if int(differencer) == 5:
+                        eeg = t[1:]
+                        # eggは各波長の強度を記述した文字列になっている。ので分割する。
+                        masaki = myfunc.get_nouha(eeg)
 
-            time += 1
-            x = np.arange(-5 + 0.1 * time, 5 + 0.1 * time, 0.1)
-            data['x'] = x
-            data['y1'] = np.append(data['y1'][1:], np.array([int(attention)]))
-            data['y2'] = np.append(data['y2'][1:], np.array([int(meditation)]))
-            data['delta'] = np.append(data['delta'][1:], np.array([masaki[0]]))
-            data['theta'] = np.append(data['theta'][1:], np.array([masaki[1]]))
-            data['lowalpha'] = np.append(
-                data['lowalpha'][1:], np.array([masaki[2]]))
-            data['highalpha'] = np.append(
-                data['highalpha'][1:], np.array([masaki[3]]))
-            data['lowbeta'] = np.append(
-                data['lowbeta'][1:], np.array([masaki[4]]))
-            data['highbeta'] = np.append(
-                data['highbeta'][1:], np.array([masaki[5]]))
-            data['lowgamma'] = np.append(
-                data['lowgamma'][1:], np.array([masaki[6]]))
-            data['midgamma'] = np.append(
-                data['midgamma'][1:], np.array([masaki[7]]))
-            data['alpha_'] = np.append(
-                data['alpha_'][1:], np.array([dat['alpha']]))
-            data['beta_'] = np.append(
-                data['beta_'][1:], np.array([dat['beta']]))
-            data['gamma_'] = np.append(
-                data['gamma_'][1:], np.array([dat['gamma']]))
-            data['lowgamma_'] = np.append(
-                data['lowgamma_'][1:], np.array([int(lowgamma)]))
-            RP.set_data(data)
-            RP.pause(0.2)
+                        if (attention != 0) and (meditation != 0):
+                            if count < 20:
+                                df.append(masaki)
+                            elif count == 20:
+                                df.append(masaki)
+                                # 条件を満たしたら平均分散の計算
+                                #print df
+                                df = np.array(df[3:])
+                                #print df
+                                mu = np.mean(df, axis=0)
+#                                print '平均', mu
+                                sigma = np.std(df, axis=0)
+#                                print sigma
+                                # 最初の数点は誤差の可能性があるので捨てる。
+                                masaki = [0] * 11
+                            else:
+                                masaki = myfunc.transform(masaki, mu, sigma)
+                                x = np.arange(-5 + 0.1 * count, 5 + 0.1 * count, 0.1)
+                                # data[0]にx軸のデータを格納
+                                data[0] = x
+                                for i in range(11):
+                                    data[i+1] = np.append(data[i+1][1:], np.array([masaki[i]]))
+#                                    data[i+1] = np.append(data[i+1][1:], count)
+                                RP.set_data(data)
+                            count = count + 1
+
+    except KeyboardInterrupt:
+        sys.exit()
