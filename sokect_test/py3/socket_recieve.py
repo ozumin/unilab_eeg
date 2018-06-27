@@ -13,7 +13,7 @@ serversock.bind((host, port))  # IPとPORTを指定してバインドします
 serversock.listen(10)  # 接続の待ち受けをします（キューの最大数を指定）
 
 if __name__ == '__main__':
-    print ('Waiting for connections...')
+    print('Waiting for connections...')
     clientsock, client_address = serversock.accept()  # 接続されればデータを格納
 
     while True:
@@ -21,7 +21,7 @@ if __name__ == '__main__':
         if rcvmsg == b'':
             break
         else:
-            rcv = int(rcvmsg)
+            rcv = rcvmsg
             print('Received ->', rcv)
 
     clientsock.close()
