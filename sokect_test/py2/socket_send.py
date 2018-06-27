@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
+このプログラムはpython2系
 https://qiita.com/nadechin/items/28fc8970d93dbf16e81b
 '''
 import socket
@@ -15,7 +16,7 @@ client.connect((host, port))  # これでサーバーに接続します
 if __name__ == '__main__':
     test = 1
     while (1):
-        print 'sent', test
+        print 'sent ->', test
         client.send(str(test))
         test = test + 1
         time.sleep(0.5)

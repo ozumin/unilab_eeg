@@ -1,4 +1,5 @@
 '''
+このプログラムはpython3系
 https://qiita.com/nadechin/items/28fc8970d93dbf16e81b
 '''
 import socket
@@ -20,6 +21,7 @@ if __name__ == '__main__':
         if rcvmsg == b'':
             break
         else:
-            print('Received -> %s' % (rcvmsg))
+            rcv = int(rcvmsg)
+            print('Received ->', rcv)
 
     clientsock.close()
