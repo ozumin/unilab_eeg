@@ -100,3 +100,4 @@ def get_nouha():
 if __name__ == '__main__':
     for a in get_nouha():
         print(a)
+        print()
