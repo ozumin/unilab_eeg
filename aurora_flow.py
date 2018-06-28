@@ -9,7 +9,8 @@ import sys
 #token = setup.generate_auth_token("10.0.1.2")
 
 # auroraと接続する
-my_aurora = Aurora("10.0.1.3", "b2UeRO2H2aImB4uHYbDKtYCHJDIxuE4W")
+#my_aurora = Aurora("10.0.1.3", "b2UeRO2H2aImB4uHYbDKtYCHJDIxuE4W")
+my_aurora = Aurora("10.0.1.2", "j03CoNyBD2uIuEWUgQKJNHBshzDSy7of")
 my_aurora.on = True
 #for panel in my_aurora.panel_positions:
 #  print(panel['panelId'])
