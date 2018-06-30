@@ -34,10 +34,13 @@ newcolor = '0 255 255 0 0 '
 color.insert(0, newcolor)
 color.pop()
 
-# mindwaveの値取得
-for a in myfunc.get_nouha():
+# calibration
+mu, sigma = myfunc.caribrate()
+
+# after calibration
+for a in myfunc.get_nouha(mu, sigma):
+    print(a)
     animdata = '9 '
-    
     r = str(int(float(a['eeg'][8] / 2000000 * 255)))
     g = str(int(float(a['eeg'][9] / 2000000 * 255)))
     b = str(int(float(a['eeg'][10] / 2000000 * 255)))
@@ -60,3 +63,5 @@ for a in myfunc.get_nouha():
     }
 
     my_aurora.effect_set_raw(effect_data)
+
+clientsock.close()
