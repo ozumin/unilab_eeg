@@ -90,10 +90,12 @@ def get_nouha(mu=[0] * 11, sigma=[1] * 11):
         t = t.decode()
         differencer = t[0:1]
         if int(differencer) == 1:
+            print(t[1:])
             attention = int(t[1:])
             ret['attention'] = attention
             # print('attention: %d' % attention)
         if int(differencer) == 2:
+            print(t[1:])
             meditation = int(t[1:])
             ret['meditation'] = meditation
             # print('meditation: %d' % meditation)

@@ -10,7 +10,7 @@ import myfunc
 
 # auroraと接続する
 #my_aurora = Aurora("10.0.1.3", "b2UeRO2H2aImB4uHYbDKtYCHJDIxuE4W")
-my_aurora = Aurora("10.0.1.2", "j03CoNyBD2uIuEWUgQKJNHBshzDSy7of")
+my_aurora = Aurora("10.0.1.3", "ufeEL3sFsRYJB92XH6gDG6O5oXRIJPhB")
 my_aurora.on = True
 #for panel in my_aurora.panel_positions:
 #  print(panel['panelId'])
@@ -37,13 +37,20 @@ color.pop()
 # calibration
 mu, sigma = myfunc.caribrate()
 
+def rgb(wave):
+    color = int(float(wave * 130 + 130))
+    if color > 255: color = 255
+    elif color < 0: color = 0
+    return str(color)
+
 # after calibration
 for a in myfunc.get_nouha(mu, sigma):
-    print(a)
+    print(a['meditation'])
+    print(a['attention'])
     animdata = '9 '
-    r = str(int(float(a['eeg'][8] / 2000000 * 255)))
-    g = str(int(float(a['eeg'][9] / 2000000 * 255)))
-    b = str(int(float(a['eeg'][10] / 2000000 * 255)))
+    r = rgb(a['eeg'][8])
+    g = rgb(a['eeg'][9])
+    b = rgb(a['eeg'][10])
     newcolor = r + ' ' + g + ' ' + b + ' ' +'0 0 '
     print(newcolor)
     type(newcolor)
