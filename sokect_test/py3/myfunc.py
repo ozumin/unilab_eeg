@@ -18,11 +18,11 @@ print('Waiting for connections...')
 clientsock, client_address = serversock.accept()  # 接続されればデータを格納
 
 
-def recieve_eeg():
+def receive_eeg():
     '''
     eegを受け取る関数。イテラブルオブジェクトである。
     使用例
-    for a in recieve_eeg():
+    for a in receive_eeg():
         print(a)
     '''
 
@@ -86,7 +86,7 @@ def get_nouha(mu=[0] * 11, sigma=[1] * 11):
     戻り値 {'eeg': [305563, 1231665, 300434, 807876, 146049, 349547, 95012, 1184955, 953925, 444559, 1184955], 'attention': 0, 'meditation': 0}のような辞書型。
     '''
     ret = {}
-    for t in recieve_eeg():
+    for t in receive_eeg():
         t = t.decode()
         differencer = t[0:1]
         if int(differencer) == 1:
@@ -137,11 +137,34 @@ def caribrate():
             count += 1
 
 
+def moving_average(*args):
+    '''
+    単純移動平均を計算する関数
+    脳波の値の配列を時刻についてタプルにしたものを引数にする。
+
+    引数 *args...脳波の値の配列を時刻についてタプルにしたもの
+                たとえば、(a_-2, a_-1, a_now)みたいな
+
+    戻り値 ret ...各要素の移動平均をとったもの
+    '''
+    arr = np.array(args)
+    return (np.sum(arr, axis=0) / arr.shape[0]).tolist()
+
+
 if __name__ == '__main__':
+    # 使用例 calibrationしてから脳波を受け取って、移動平均を表示する。
     mu, sigma = caribrate()
+    nouhas = []
     for a in get_nouha(mu, sigma):
-        print(a)
+        print('receive->', a)
         print()
+        nouhas.append(a['eeg'])
+        print(len(nouhas))  # 確認用
+        print(moving_average(*nouhas))
+        print()
+        # 三この移動平均を取るため、オーバーした分は捨てていく。
+        if len(nouhas) == 4:
+            nouhas.pop(0)
 
     # これをつけ忘れるな
     clientsock.close()
