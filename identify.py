@@ -6,7 +6,7 @@
 import myfunc as mf
 import numpy as np
 import csv
-
+import sys
 
 def calc_features(tau=20):
     '''
@@ -36,7 +36,10 @@ def calc_features(tau=20):
 
 
 if __name__ == '__main__':
+    name = sys.argv #誰のデータかを保存
+    name = name[1]
+    
     mu, sigma = calc_features(40)
     with open('./result.csv', 'a') as f:
         writer = csv.writer(f)
-        writer.writerow(mu + sigma)
+        writer.writerow([name] + mu + sigma)
