@@ -7,6 +7,7 @@ import myfunc as mf
 import numpy as np
 import csv
 import sys
+import pandas as pd
 
 def calc_features(tau=20):
     '''
@@ -34,12 +35,27 @@ def calc_features(tau=20):
                 return mu.tolist(), sigma.tolist()
             count += 1
 
+def raw_nouha(tau=20):
+    print('calculating features...')
+    count = 0
+    df = pd.DataFrame()
+    for mind in mf.get_nouha():
+        if (mind['attention'] != 0) & (mind['meditation'] != 0):
+            df = pd.concat([df,pd.DataFrame({str(count) : mind['eeg']})], axis=1)
+            if count == tau:
+                print(df)
+                return df
+            count += 1
 
 if __name__ == '__main__':
     name = sys.argv #誰のデータかを保存
     name = name[1]
     
-    mu, sigma = calc_features(40)
-    with open('./result.csv', 'a') as f:
-        writer = csv.writer(f)
-        writer.writerow([name] + mu + sigma)
+#    mu, sigma = calc_features(40)
+    data = raw_nouha(20)
+    print(data)
+    print(type(data))
+    data.to_csv('./' + name + 'result.csv')
+#    with open('./' + name + 'result.csv', 'a') as f:
+#        writer = csv.writer(f)
+#        writer.writerow(data)
