@@ -1,32 +1,16 @@
-library(StatMatch)
-library(proxy)
+# result.csv(made by identify.py) is required. output cluster result into cluster.pdf
 
-data <- read.csv("result.csv", row.names=1)
-#data <- data[c(2,4,7,15,21),]
+library(readr)
+data <- read_csv("data/result.csv", col_names = FALSE)
+# feature selection
+feature_idx = c(1,10:12,21:23)
+data <- data[feature_idx]
+rownames(data) <- data$X1
+data$X1 <- NULL
 
-n = 7 # number of people
-
-sam <- sample(1:n, 4)
-
-rand <- c()
-for(i in sam){
-    rand <- append(rand, sample(((i-1)*5+1):(i*5), 2))
-}
-
-#variable <- c(1,3,5,6,7,10,18)
-#variable <- c(1,3,5,6,7,10)
-variable <- c(1:8)
-#variable <- c(9:11)
-#variable <- c(1:11)
-#variable <- c(1:22)
-
-dat <- data[rand, variable]
-#d <- mahalanobis.dist(dat)
-#d <- proxy::dist(dat, method="mahalanobis")
-d <- dist(dat, method="manhattan")
+d <- dist(data, method="euclidean")
 print(d)
 clst <- hclust(d, method="ward.D")
-
 pdf("cluster.pdf")
 plot(clst)
 dev.off()

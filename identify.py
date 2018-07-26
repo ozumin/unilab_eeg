@@ -9,6 +9,7 @@ import csv
 import sys
 import pandas as pd
 
+
 def calc_features(tau=20):
     '''
     脳波の特徴量を計算する関数。それぞれの周波数強度の平均と標準偏差を特徴とする。
@@ -35,27 +36,31 @@ def calc_features(tau=20):
                 return mu.tolist(), sigma.tolist()
             count += 1
 
+
 def raw_nouha(tau=20):
     print('calculating features...')
     count = 0
     df = pd.DataFrame()
     for mind in mf.get_nouha():
         if (mind['attention'] != 0) & (mind['meditation'] != 0):
-            df = pd.concat([df,pd.DataFrame({str(count) : mind['eeg']})], axis=1)
+            df = pd.concat(
+                [df, pd.DataFrame({str(count): mind['eeg']})], axis=1)
             if count == tau:
                 print(df)
                 return df
             count += 1
 
+
 if __name__ == '__main__':
-    name = sys.argv #誰のデータかを保存
-    name = name[1]
-    
-#    mu, sigma = calc_features(40)
-    data = raw_nouha(20)
-    print(data)
-    print(type(data))
-    data.to_csv('./' + name + 'result.csv')
-#    with open('./' + name + 'result.csv', 'a') as f:
-#        writer = csv.writer(f)
-#        writer.writerow(data)
+    # 誰のデータかを保存
+    name = sys.argv[2]
+    if sys.argv[1] == 'vis':  # ビジュアリゼーション用のデータフレーム
+        data = raw_nouha(20)
+        print(data)
+        print(type(data))
+        data.to_csv('./data/' + name + 'result_vis.csv')
+    elif sys.argv[1] == 'hcl':  # クラスタリング用
+        mu, sigma = calc_features(20)  # 40点ではなかなか良かった
+        with open('./data/result.csv', 'a') as f:
+            writer = csv.writer(f)
+            writer.writerow([name] + mu + sigma)
