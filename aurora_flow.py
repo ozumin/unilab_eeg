@@ -9,8 +9,7 @@ import myfunc
 #token = setup.generate_auth_token("10.0.1.2")
 
 # auroraと接続する
-#my_aurora = Aurora("10.0.1.3", "b2UeRO2H2aImB4uHYbDKtYCHJDIxuE4W")
-my_aurora = Aurora("10.0.1.3", "ufeEL3sFsRYJB92XH6gDG6O5oXRIJPhB")
+my_aurora = Aurora("10.0.1.2", "aImB4uHYbDKtYCHJDIxuE4WEY8fuAuui")
 my_aurora.on = True
 #for panel in my_aurora.panel_positions:
 #  print(panel['panelId'])
@@ -28,11 +27,13 @@ index = [['23', '53', '77', '86', '87', '101', '113', '209', '218'],
 
 color = []
 for i in range(len(index[1])):
-    color.append('255 0 0 0 0 ')
+    color.append('255 255 255 0 0 ')
 
-newcolor = '0 255 255 0 0 '
-color.insert(0, newcolor)
-color.pop()
+#newcolor = '0 255 255 0 0 '
+#color.insert(0, newcolor)
+#color.pop()
+
+r = '255'
 
 # calibration
 mu, sigma = myfunc.caribrate()
@@ -44,31 +45,35 @@ def rgb(wave):
     return str(color)
 
 # after calibration
-for a in myfunc.get_nouha(mu, sigma):
-    print(a['meditation'])
-    print(a['attention'])
-    animdata = '9 '
-    r = rgb(a['eeg'][8])
-    g = rgb(a['eeg'][9])
-    b = rgb(a['eeg'][10])
-    newcolor = r + ' ' + g + ' ' + b + ' ' +'0 0 '
-    print(newcolor)
-    type(newcolor)
+while True:
+    try:
+        for a in myfunc.get_nouha(mu, sigma):
+            print(a['meditation'])
+            print(a['attention'])
+            animdata = '9 '
+            #r = rgb(a['eeg'][8])
+            g = rgb(a['eeg'][9])
+            b = rgb(a['eeg'][10])
+            newcolor = r + ' ' + g + ' ' + b + ' ' +'0 0 '
+            print(newcolor)
+            type(newcolor)
 
-    color.insert(0, newcolor)
-    color.pop()
+            color.insert(0, newcolor)
+            color.pop()
 
-    for i in range(len(color)):
-        animdata += index[1][i] + color[i]
+            for i in range(len(color)):
+                animdata += index[1][i] + color[i]
 
-    effect_data = {
-        "command" : "add",
-        "animName": "Flash",
-        "animType": "custom",
-        "animData": animdata,
-        "loop": True
-    }
+            effect_data = {
+                "command" : "add",
+                "animName": "Flash",
+                "animType": "custom",
+                "animData": animdata,
+                "loop": True
+            }
 
-    my_aurora.effect_set_raw(effect_data)
+            my_aurora.effect_set_raw(effect_data)
+    except ValueError:
+        print("ValueError") 
 
 clientsock.close()
