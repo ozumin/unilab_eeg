@@ -1,8 +1,39 @@
-# -*- coding: utf-8 -*-
+# coding:utf-8
+
+'''
+python3系で動かすこと。
+eeg_sendからのデータを受け取り。様々な処理をする。またmainで呼び出すための関数群を整備している。
+'''
+import socket
+import time
 import numpy as np
-import thinkgear
-import time as tm
-PORT = '/dev/tty.MindWaveMobile-SerialPo'
+
+host = "127.0.0.1"  # ローカルホストを指定
+port = 50007  # 適当なPORTを指定してあげます
+
+serversock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serversock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+serversock.bind((host, port))  # IPとPORTを指定してバインドします
+serversock.listen(64)  # 接続の待ち受けをします（キューの最大数を指定）
+
+print('Waiting for connections...')
+clientsock, client_address = serversock.accept()  # 接続されればデータを格納
+
+
+def receive_eeg():
+    '''
+    eegを受け取る関数。イテラブルオブジェクトである。
+    使用例
+    for a in receive_eeg():
+        print(a)
+    '''
+
+    while True:
+        rcvmsg = clientsock.recv(4096)
+        if rcvmsg == b'':
+            break
+        else:
+            yield rcvmsg
 
 
 def calc_nouha(intensities):
@@ -21,7 +52,7 @@ def calc_nouha(intensities):
     }
 
 
-def get_nouha(eeg):
+def eeg_decoder(eeg):
     '''
     脳波の振幅強度をgetするための関数。
     引数
@@ -41,7 +72,47 @@ def get_nouha(eeg):
     return masaki
 
 
-def calibrate(PORT=PORT):
+def get_nouha(mu=[0] * 11, sigma=[1] * 11):
+    '''
+    イテラボーオブジェクト
+    使用例
+        for a in get_nouha():
+        print(a)
+
+    引数
+    平均(mu)...[delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gamma]の各平均値を順にリストで引き渡す
+    標準偏差(sigma)...上記と同様、標準偏差を引き渡す。
+
+    機能...脳波(次の戻り値)を次々と返す関数。なお、引数が指定されている場合は、それぞれの要素に対してmuとsigmaで正規化すて、返り値を返す。
+
+    戻り値 {'eeg': [305563, 1231665, 300434, 807876, 146049, 349547, 95012, 1184955, 953925, 444559, 1184955], 'attention': 0, 'meditation': 0}のような辞書型。
+    '''
+    ret = {}
+    for t in receive_eeg():
+        t = t.decode()
+        differencer = t[0:1]
+        if int(differencer) == 1:
+            print('attention', t[1:])
+            attention = int(t[1:])
+            ret['attention'] = attention
+            # print('attention: %d' % attention)
+        if int(differencer) == 2:
+            # print(t[1:])
+            meditation = int(t[1:])
+            ret['meditation'] = meditation
+            # print('meditation: %d' % meditation)
+        if int(differencer) == 5:
+            eeg = t[1:]
+            ret['eeg'] = eeg_decoder(eeg)
+            ret['eeg'] = [(pwr - m) / s
+                          for pwr, m, s
+                          in zip(ret['eeg'], mu, sigma)]
+        if len(ret) == 3:
+            yield ret
+            ret = {}
+
+
+def caribrate():
     '''
     キャリブレーションのための関数。人によって脳波が違いすぎるのでこれを行う。(脳波強度が正規分布に従って発生すると仮定)
     ここでは平均と標準偏差を求め、それらを返す。これによって後に平均0分散1となるような変形ができる
@@ -50,76 +121,53 @@ def calibrate(PORT=PORT):
     戻り値
         平均(mu)...[delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gamma]の各平均値を順にリストで返す。
         標準偏差(sigma)...上記と同様、標準偏差を返す
-
     '''
+    print('caribrating stand by...')
     count = 0
-    attention, meditation = 0, 0
     df = []
-    for packets in thinkgear.ThinkGearProtocol(PORT).get_packets():
-        for pkt in packets:
-            if isinstance(pkt, thinkgear.ThinkGearRawWaveData):
-                continue
-            t = str(pkt)
-            # センサーで取得した値の格納
-            if t != '':
-                differencer = t[0:1]
-                if int(differencer) == 1:
-                    attention = int(t[1:])
-                    print 'attention: %d' % attention
-                if int(differencer) == 2:
-                    meditation = int(t[1:])
-                    print 'meditation: %d' % meditation
-                if int(differencer) == 5:
-                    eeg = t[1:]
-                    # eggは各波長の強度を記述した文字列になっている。ので分割する。
-                    masaki = get_nouha(eeg)
-                    # print masaki
-                    # masakiはふざけてつけた変数名, それぞれの波の強度をint型で格納している。
-                    # masakiは順番にdelta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gammaみたいになっている。
-                    if (attention != 0) and (meditation != 0):
-                        df.append(masaki)
-                        if count > 20:
-                            # 条件を満たしたら平均分散の計算
-                            #print df
-                            df = np.array(df[3:])
-                            #print df
-                            mu = np.mean(df, axis=0)
-                            print '平均', mu
-                            sigma = np.std(df, axis=0)
-                            # 最初の数点は誤差の可能性があるので捨てる。
-                            return mu.tolist(), sigma.tolist()
-                        count = count + 1
+    for mind in get_nouha():
+        if (mind['attention'] != 0) & (mind['meditation'] != 0):
+            df.append(mind['eeg'])
+            if count == 20:
+                print('caribrating...')
+                df = np.array(df[3:])
+                # print df
+                mu = np.mean(df, axis=0)
+                print('平均', mu)
+                sigma = np.std(df, axis=0)
+                # 最初の数点は誤差の可能性があるので捨てる。
+                return mu.tolist(), sigma.tolist()
+            count += 1
 
 
-def transform(masaki, mu, s):
+def moving_average(*args):
     '''
-    masaki([delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gamma]の振幅強度)が与えられたら、それを平均0分散1になるようにmuとsigmaで調節する関数
-    引数
-        [delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gamma]...それぞれの振幅強度
+    単純移動平均を計算する関数
+    脳波の値の配列を時刻についてタプルにしたものを引数にする。
 
-        mu...それぞれに対応する平均値のリスト
+    引数 *args...脳波の値の配列を時刻についてタプルにしたもの
+                たとえば、(a_-2, a_-1, a_now)みたいな
 
-        sigma...それぞれに対応する標準偏差のリスト
-
-    戻り値
-        ret...平均値を引いて標準偏差でわった[delta, theta, lowalpha, highalpha, lowbeta, highbeta, lowgamma, midgamma, alpha, beta, gamma]のリスト
+    戻り値 ret ...各要素の移動平均をとったもの
     '''
-    if len(masaki) == len(mu):
-        return [(x - m) / s for x, m, s in zip(masaki, mu, s)]
-    else:
-        print '!!!Maybe Error in transform()!!!'
-
-
-def moving_average():
-    '''
-    移動平均を取るための関数。
-    編集中
-    '''
+    arr = np.array(args)
+    return (np.sum(arr, axis=0) / arr.shape[0]).tolist()
 
 
 if __name__ == '__main__':
-    print calibrate()
+    # 使用例 calibrationしてから脳波を受け取って、移動平均を表示する。
+    mu, sigma = caribrate()
+    nouhas = []
+    for a in get_nouha(mu, sigma):
+        print('receive->', a)
+        print()
+        nouhas.append(a['eeg'])
+        print(len(nouhas))  # 確認用
+        print(moving_average(*nouhas))
+        print()
+        # 三この移動平均を取るため、オーバーした分は捨てていく。
+        if len(nouhas) == 4:
+            nouhas.pop(0)
 
-# 平均([677715.5263157894, 114093.63157894737, 24982.157894736843, 24046.526315789473, 19356.63157894737, 13616.842105263158, 5000.315789473684, 231846.26315789475, 43403.15789473684, 18617.157894736843, 231846.26315789475],
-
-# 標準偏差[479656.80842094286, 125444.25667632134, 34211.296286557874, 26693.98110627074, 20394.499406020255, 19177.078566442025, 5538.17903811097, 259605.190335114, 46271.29902771168, 23882.26995572714, 259605.190335114])
+    # これをつけ忘れるな
+    clientsock.close()
