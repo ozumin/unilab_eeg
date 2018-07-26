@@ -60,7 +60,7 @@ if __name__ == '__main__':
         print(type(data))
         data.to_csv('./data/' + name + 'result_vis.csv')
     elif sys.argv[1] == 'hcl':  # クラスタリング用
-        mu, sigma = calc_features(40)
+        mu, sigma = calc_features(20)  # 40点ではなかなか良かった
         with open('./data/result.csv', 'a') as f:
             writer = csv.writer(f)
             writer.writerow([name] + mu + sigma)
