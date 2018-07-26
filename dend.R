@@ -15,14 +15,15 @@ for(i in sam){
 
 #variable <- c(1,3,5,6,7,10,18)
 #variable <- c(1,3,5,6,7,10)
-#variable <- c(1:8)
-variable <- c(9:11)
+variable <- c(1:8)
+#variable <- c(9:11)
 #variable <- c(1:11)
 #variable <- c(1:22)
 
 dat <- data[rand, variable]
 #d <- mahalanobis.dist(dat)
-d <- proxy::dist(dat, method="mahalanobis")
+#d <- proxy::dist(dat, method="mahalanobis")
+d <- dist(dat, method="manhattan")
 print(d)
 clst <- hclust(d, method="ward.D")
 
