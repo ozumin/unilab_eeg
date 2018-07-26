@@ -1,4 +1,7 @@
-Project: https://www.murata.eb.waseda.ac.jp/gitlab/masaki/mindwave
+Project: https://github.com/ozumin/unilab_eeg/tree/master
+or
+https://www.murata.eb.waseda.ac.jp/gitlab/masaki/mindwave
+
 
 ## ユニラブ用のプロジェクト
 
@@ -21,12 +24,27 @@ http://mikenerian.hatenablog.com/entry/2017/12/18/222633
 * 公式ユーザーガイド
 http://developer.neurosky.com/docs/lib/exe/fetch.php?media=mwmplus_qsg_print_8122016d_jp.pdf
 
-### アイデア
-* 脳波で集中力などを使う?
-* バトル性があると面白いかも？
-* とりあえず買ってみてどんぐらいデータが取れるか見てみないといけない。(購入した、商品が届くのは5月10日以降らし)
-* ~~EyeTribeも組合わせてつかったら面白いかも？ (元向井さんの机の上)←ボツ~~
 
+### 使い方
+プログラムの実行の仕方はここに書いて他の人も実行できるようにしておこう。
 
+#### 当てゲームのしかた
+1. identify.pyを起動する
+
+```
+python3 identify.py hcl somebody(name)
+```
+2. 別のターミナルでmindwaveからデータを受信し、identify.pyに受け渡すプログラムを立ち上げる
+```
+cd ./send_eeg
+python2 eeg_send.py
+```
+3. しばらくすると、データから特徴量の計算が終わりdata/の中に保存される。
+4. 1,2,3を2~3人に2回ずつ(根拠なし)やらせる。
+5. dend.Rでデンドログラムのpdfファイルを制作する
+```
+Rscript dend.R
+```
+6. pdfのクラスター構造を見て、誰の脳波かを判断する
 
 
