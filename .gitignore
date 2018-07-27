@@ -3,4 +3,6 @@ data/
 *.csv
 *.pdf
 .DS_Store
-.vscode
+.vscode/
+.Rhistory
+.RData
