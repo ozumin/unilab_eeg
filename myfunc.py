@@ -33,7 +33,6 @@ def receive_eeg():
         if rcvmsg == b'':
             break
         else:
-            print('Received ->', rcvmsg)
             yield rcvmsg
 
 
