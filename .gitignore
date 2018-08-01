@@ -6,3 +6,4 @@ data/
 .vscode/
 .Rhistory
 .RData
+__pycache__/
