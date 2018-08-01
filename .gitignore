@@ -1,2 +1,8 @@
 *.pyc
+data/
 *.csv
+*.pdf
+.DS_Store
+.vscode/
+.Rhistory
+.RData
