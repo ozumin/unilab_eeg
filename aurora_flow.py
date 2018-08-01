@@ -9,8 +9,9 @@ import myfunc
 #token = setup.generate_auth_token("10.0.1.2")
 
 # auroraと接続する
-my_aurora = Aurora("10.0.1.2", "aImB4uHYbDKtYCHJDIxuE4WEY8fuAuui")
+my_aurora = Aurora("10.0.1.2", "Bv2Q1YkMWfXaooJ5nkWaYftRenhqDh6O")
 my_aurora.on = True
+my_aurora.brightness_raise(100)
 #for panel in my_aurora.panel_positions:
 #  print(panel['panelId'])
 
@@ -33,13 +34,15 @@ for i in range(len(index[1])):
 #color.insert(0, newcolor)
 #color.pop()
 
-r = '255'
+#g = '50'
+count = 0
+dat = ()
 
 # calibration
 mu, sigma = myfunc.caribrate()
 
 def rgb(wave):
-    color = int(float(wave * 130 + 130))
+    color = int(float(wave * 65 + 130))
     if color > 255: color = 255
     elif color < 0: color = 0
     return str(color)
@@ -48,12 +51,20 @@ def rgb(wave):
 while True:
     try:
         for a in myfunc.get_nouha(mu, sigma):
+            count += 1
+            if(count < 6):
+                dat = dat + (a['eeg'],)
+                ave = a['eeg']
+            else:
+                dat = dat[1:] + (a['eeg'],)
+            ave = myfunc.moving_average(*dat)
+            print(ave)
             print(a['meditation'])
             print(a['attention'])
             animdata = '9 '
-            #r = rgb(a['eeg'][8])
-            g = rgb(a['eeg'][9])
-            b = rgb(a['eeg'][10])
+            r = rgb(ave[9])
+            g = rgb(ave[10])
+            b = rgb(ave[8])
             newcolor = r + ' ' + g + ' ' + b + ' ' +'0 0 '
             print(newcolor)
             type(newcolor)
