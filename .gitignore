@@ -1,6 +1,5 @@
 *.pyc
-data/
-*.csv
+./data/*
 !./data/base.csv
 *.pdf
 .DS_Store
