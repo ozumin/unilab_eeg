@@ -1,6 +1,7 @@
 *.pyc
 data/
 *.csv
+!./data/base.csv
 *.pdf
 .DS_Store
 .vscode/
