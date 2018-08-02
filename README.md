@@ -47,4 +47,29 @@ Rscript dend.R
 ```
 6. pdfのクラスター構造を見て、誰の脳波かを判断する
 
-
+#### オーロラで可視化するやり方
+1. MurataMobile wifiをつけてパソコンを接続する．
+    Auroraとmindwaveを起動しておく．
+2. python3を立ち上げて以下のコマンドを打つ．
+```
+from nanoleaf import setup
+from nanoleaf import Aurora
+ipAddressList = setup.find_auroras()
+```
+3. AuroraのIPアドレスが出てくるのでトークンを作成する（IPアドレスは手動で打つ）
+```
+token = setup.generate_auth_token("IPアドレス")
+```
+4. トークンが作成されるのでこれをaurora_flow.pyの中にIPアドレスと共に書き込む．
+```
+my_aurora = Aurora("IPアドレス", "token")
+```
+    これで準備は整った．
+5. 以下のコマンドを実行する．
+```
+python3 aurora_flow.py
+```
+別ウィンドウでsend_eeg/内で以下のコマンドを実行する．
+```
+python send_eeg.py
+```
