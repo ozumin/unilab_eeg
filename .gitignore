@@ -1,6 +1,6 @@
 *.pyc
-./data/*
-!./data/base.csv
+/data/*
+!/data/base.csv
 *.pdf
 .DS_Store
 .vscode/
