@@ -3,6 +3,7 @@
 library(readr)
 library(pacman) #install.packages("pacman")
 library(RColorBrewer)
+pacman::p_load(amap, dplyr, RColorBrewer, dendextend)
 
 data <- read_csv("data/result.csv", col_names = FALSE)
 # feature selection
