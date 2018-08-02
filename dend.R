@@ -17,8 +17,8 @@ print(d)
 clst <- hclust(d, method="ward.D")
 
 den <- as.dendrogram(clst)
-n <- nrow(data) / 2
-col3 <- brewer.pal(3, "Set1")
+n <- ceiling(nrow(data) / 2) 
+col3 <- brewer.pal(10, "Set1")
 col.cl3 <- col3[cutree(clst, k=n, order_clusters_as_data = F)]
 den <- den %>%
     dendextend::set("labels_colors", value = col.cl3) %>%
