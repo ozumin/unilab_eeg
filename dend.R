@@ -1,12 +1,11 @@
 # result.csv(made by identify.py) is required. output cluster result into cluster.pdf
 
 library(readr)
-#library(pacman) #install.packages("pacman")
+library(pacman) #install.packages("pacman")
 library(RColorBrewer)
 library(amap)
-library(dplyr)
 library(dendextend)
-#pacman::p_load(amap, dplyr, RColorBrewer, dendextend)
+pacman::p_load(amap, dplyr, RColorBrewer, dendextend)
 
 data <- read_csv("data/result.csv", col_names = FALSE)
 # feature selection
