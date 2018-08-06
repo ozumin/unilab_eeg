@@ -1,9 +1,12 @@
 # result.csv(made by identify.py) is required. output cluster result into cluster.pdf
 
 library(readr)
-library(pacman) #install.packages("pacman")
+#library(pacman) #install.packages("pacman")
 library(RColorBrewer)
-pacman::p_load(amap, dplyr, RColorBrewer, dendextend)
+library(amap)
+library(dplyr)
+library(dendextend)
+#pacman::p_load(amap, dplyr, RColorBrewer, dendextend)
 
 data <- read_csv("data/result.csv", col_names = FALSE)
 # feature selection
@@ -18,7 +21,7 @@ clst <- hclust(d, method="ward.D")
 
 den <- as.dendrogram(clst)
 n <- ceiling(nrow(data) / 2) 
-col3 <- brewer.pal(10, "Set1")
+col3 <- brewer.pal(9, "Set1")
 col.cl3 <- col3[cutree(clst, k=n, order_clusters_as_data = F)]
 den <- den %>%
     dendextend::set("labels_colors", value = col.cl3) %>%
