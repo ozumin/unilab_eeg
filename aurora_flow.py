@@ -9,7 +9,7 @@ import myfunc
 #token = setup.generate_auth_token("10.0.1.2")
 
 # auroraと接続する
-my_aurora = Aurora("10.0.1.2", "eComgYFRbkya8PMdhyPAqDoj6Xh05HYi")
+my_aurora = Aurora("10.0.1.2", "malMA6Bw9QCrkBMTl0RufeEL3sFsRYJB")
 my_aurora.on = True
 my_aurora.brightness_raise(100)
 #for panel in my_aurora.panel_positions:
